@@ -20,8 +20,8 @@ const logger = winston.createLogger({
 	],
 });
 
-const gorillaHost = process.env.GORILLA_EXPRESS_HOST || 'localhost'
-const gorillaPort = process.env.GORILLA_EXPRESS_PORT || 9090
+const gorillaHost = process.env.GORILLA_HOST || 'localhost'
+const gorillaPort = process.env.GORILLA_PORT || 9090
 
 const http = require('http')
 const options = {

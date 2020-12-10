@@ -1,0 +1,45 @@
+version: 2.1
+
+orbs:
+  signalfx: kikeyama/signalfx@0.1.1
+  splunk: kikeyama/splunk@0.1.0
+  aws-ecr: circleci/aws-ecr@6.12.2
+
+workflows:
+  main:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          checkout: true
+          create-repo: false
+          dockerfile: Dockerfile
+          region: AWS_REGION
+          repo: ${AWS_ECR_REPOSITORY}
+          skip-when-tags-exist: false
+          tag: 'latest,${CIRCLE_SHA1}'
+          context: kikeyama-context
+          filters:
+            branches:
+              only: 
+                - master
+      - signalfx/workflow-event:
+          signalfx_access_token: '${SIGNALFX_ACCESS_TOKEN}'
+          signalfx_realm: '${SIGNALFX_REALM}'
+          service: grpc-sfx-demo
+          event_type: deploy
+          context: kikeyama-context
+          requires:
+            - aws-ecr/build-and-push-image
+      - splunk/workflow-event:
+          subject: notificatoin from main workflow
+          message: Successfully finisheed deploying to my cluster
+          splunk_hec_host: '${SPLUNK_HEC_HOST}'
+          splunk_hec_port: 8088
+          splunk_hec_protocol: http
+          splunk_hec_token: '${SPLUNK_HEC_TOKEN}'
+          splunk_index: circleci
+          context: kikeyama-context
+          requires:
+            - aws-ecr/build-and-push-image
