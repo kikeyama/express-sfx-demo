@@ -65,8 +65,19 @@ app.get('/api/grpc/animal', (req, res) => {
 
   client.listAnimals({}, (err, response) => {
     logger.info('Request ListAnimals via gRPC');
-    res.set('Content-Type', 'application/json');
-    res.send(response.animals);
+    if (!err) {
+      logger.error('gRPC ListAnimals request success');
+      res.set('Content-Type', 'application/json');
+      res.send(response.animals);
+    } else {
+      logger.error('gRPC ListAnimals request failed');
+      res.set('Content-Type', 'application/json');
+      res.status(500).send({
+        code: 500,
+        status: 'error',
+        message: 'grpc error: ' + err
+      });
+    }
   });
 });
 
@@ -76,8 +87,19 @@ app.get('/api/grpc/animal/:animalId([0-9a-f\-]{36})', (req, res) => {
 
   client.getAnimal({id: animalId}, (err, response) => {
     logger.info('Request GetAnimal via gRPC');
-    res.set('Content-Type', 'application/json');
-    res.send(response);
+    if (!err) {
+      logger.error('gRPC GetAnimal request success');
+      res.set('Content-Type', 'application/json');
+      res.send(response);
+    } else {
+      logger.error('gRPC GetAnimal request failed');
+      res.set('Content-Type', 'application/json');
+      res.status(500).send({
+        code: 500,
+        status: 'error',
+        message: 'grpc error: ' + err
+      });
+    }
   });
 });
 
@@ -87,8 +109,19 @@ app.post('/api/grpc/animal', (req, res) => {
 
   client.createAnimal(req.body, (err, response) => {
     logger.info('Request CreateAnimal via gRPC');
-    res.set('Content-Type', 'application/json');
-    res.send(response);
+    if (!err) {
+      logger.error('gRPC CreateAnimal request success');
+      res.set('Content-Type', 'application/json');
+      res.send(response);
+    } else {
+      logger.error('gRPC CreateAnimal request failed');
+      res.set('Content-Type', 'application/json');
+      res.status(500).send({
+        code: 500,
+        status: 'error',
+        message: 'grpc error: ' + err
+      });
+    }
   });
 });
 
@@ -98,8 +131,19 @@ app.delete('/api/grpc/animal/:animalId([0-9a-f\-]{36})', (req, res) => {
 
   client.deleteAnimal({id: animalId}, (err, response) => {
     logger.info('Request DeleteAnimal via gRPC');
-    res.set('Content-Type', 'application/json');
-    res.send({status:'ok'});
+    if (!err) {
+      logger.error('gRPC DeleteAnimal request success');
+      res.set('Content-Type', 'application/json');
+      res.send({status:'ok'});
+    } else {
+      logger.error('gRPC DeleteAnimal request failed');
+      res.set('Content-Type', 'application/json');
+      res.status(500).send({
+        code: 500,
+        status: 'error',
+        message: 'grpc error: ' + err
+      });
+    }
   });
 });
 
